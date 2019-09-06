@@ -69,7 +69,7 @@ QString qSlicerGestureRecognitionModule::acknowledgementText() const
 QStringList qSlicerGestureRecognitionModule::contributors() const
 {
   QStringList moduleContributors;
-  moduleContributors << QString("John Doe (AnyWare Corp.)");
+  moduleContributors << QString("Daniel Allen (Western University)");
   return moduleContributors;
 }
 

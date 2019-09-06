@@ -25,3 +25,17 @@ SlicerMacroBuildModuleLogic(
   SRCS ${${KIT}_SRCS}
   TARGET_LIBRARIES ${${KIT}_TARGET_LIBRARIES}
   )
+
+configure_file(
+  ${CMAKE_CURRENT_SOURCE_DIR}/../Resources/Models/ANBCModel.grt
+  ${SlicerLeapMotion_BINARY_DIR}/${Slicer_QTLOADABLEMODULES_SHARE_DIR}/${MODULE_NAME}/ANBCModel.grt
+  COPYONLY)
+configure_file(
+  ${CMAKE_CURRENT_SOURCE_DIR}/../Resources/Models/DecisionTreeModel.grt
+  ${SlicerLeapMotion_BINARY_DIR}/${Slicer_QTLOADABLEMODULES_SHARE_DIR}/${MODULE_NAME}/DecisionTreeModel.grt
+  COPYONLY)
+
+install(
+  FILES ${CMAKE_CURRENT_SOURCE_DIR}/../Resources/Models/ANBCModel.grt
+  FILES ${CMAKE_CURRENT_SOURCE_DIR}/../Resources/Models/DecisionTreeModel.grt
+  DESTINATION ${Slicer_INSTALL_QTLOADABLEMODULES_SHARE_DIR}/${MODULE_NAME} COMPONENT Runtime)

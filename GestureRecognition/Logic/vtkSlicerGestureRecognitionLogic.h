@@ -15,48 +15,80 @@
 
 ==============================================================================*/
 
-// .NAME vtkSlicerGestureRecognitionLogic - slicer logic class for volumes manipulation
+// .NAME vtkSlicerGestureRecognitionLogic - Slicer Logic class for gesture recognition
 // .SECTION Description
-// This class manages the logic associated with reading, saving,
-// and changing propertied of the volumes
+// This class manages the logic associated with prediciting a gesture from linear transform
+// position data
 
 
 #ifndef __vtkSlicerGestureRecognitionLogic_h
 #define __vtkSlicerGestureRecognitionLogic_h
 
 // Slicer includes
-#include "vtkSlicerModuleLogic.h"
+#include <vtkSlicerModuleLogic.h>
 
-// MRML includes
-#include <GRT.h>
+// VTK includes
+#include <vtkCallbackCommand.h>
+#include <vtkSmartPointer.h>
 
-// STD includes
-#include <cstdlib>
+// STL includes
+#include <memory>
 
+// Local includes
 #include "vtkSlicerGestureRecognitionModuleLogicExport.h"
 
+class vtkMRMLLinearTransformNode;
+class vtkMatrix4x4;
+namespace GRT
+{
+  class ANBC;
+  class DecisionTree;
+  class AdaBoost;
+  class KNN;
+}
 
-/// \ingroup Slicer_QtModules_ExtensionTemplate
+/// \ingroup Slicer_QtModules_LeapMotion
 class VTK_SLICER_GESTURERECOGNITION_MODULE_LOGIC_EXPORT vtkSlicerGestureRecognitionLogic :
   public vtkSlicerModuleLogic
 {
 public:
+  enum PredictionModel
+  {
+    GRT_ANBC,
+    GRT_DECISION_TREE,
+    GRT_ADABOOST,
+    GRT_KNN
+  };
 
-  static vtkSlicerGestureRecognitionLogic *New();
+  enum
+  {
+    GestureRecognizedEvent = 280023918
+  };
+
+  static vtkSlicerGestureRecognitionLogic* New();
   vtkTypeMacro(vtkSlicerGestureRecognitionLogic, vtkSlicerModuleLogic);
   void PrintSelf(ostream& os, vtkIndent indent);
+
+  void StartPrediction(vtkMRMLLinearTransformNode* node);
+  void SetPredictionModelType(PredictionModel model);
+
+protected:
+  static void OnTransformModified(vtkObject* caller, unsigned long eid, void* clientdata, void* calldata);
 
 protected:
   vtkSlicerGestureRecognitionLogic();
   virtual ~vtkSlicerGestureRecognitionLogic();
 
-  virtual void SetMRMLSceneInternal(vtkMRMLScene* newScene);
-  /// Register MRML Node classes to Scene. Gets called automatically when the MRMLScene is attached to this logic class.
-  virtual void RegisterNodes();
-  virtual void UpdateFromMRMLScene();
-  virtual void OnMRMLSceneNodeAdded(vtkMRMLNode* node);
-  virtual void OnMRMLSceneNodeRemoved(vtkMRMLNode* node);
-private:
+protected:
+  PredictionModel                     ModelType;
+  std::unique_ptr<GRT::ANBC>          ANBCModel;
+  std::unique_ptr<GRT::DecisionTree>  DecisionTreeModel;
+  std::unique_ptr<GRT::AdaBoost>      AdaBoostModel;
+  std::unique_ptr<GRT::KNN>           KNNModel;
+
+  unsigned long                       ObserverTag;
+  vtkMRMLLinearTransformNode*         ObservedTransformNode;
+  vtkSmartPointer<vtkCallbackCommand> TransformModifiedCallback;
 
   vtkSlicerGestureRecognitionLogic(const vtkSlicerGestureRecognitionLogic&); // Not implemented
   void operator=(const vtkSlicerGestureRecognitionLogic&); // Not implemented

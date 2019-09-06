@@ -18,28 +18,95 @@
 // GestureRecognition Logic includes
 #include "vtkSlicerGestureRecognitionLogic.h"
 
+// GRT includes
+#include <GRT.h>
+
 // MRML includes
-#include <vtkMRMLScene.h>
+#include <vtkMRMLLinearTransformNode.h>
 
 // VTK includes
-#include <vtkIntArray.h>
+#include <vtkMatrix4x4.h>
 #include <vtkNew.h>
 #include <vtkObjectFactory.h>
-
-// STD includes
-#include <cassert>
+#include <vtkTransform.h>
 
 //----------------------------------------------------------------------------
 vtkStandardNewMacro(vtkSlicerGestureRecognitionLogic);
 
+namespace
+{
+  std::array<double, 3> vtkMatrixToEulerAngles(vtkMatrix4x4* R)
+  {
+    std::array<double, 3> a;
+
+    float sy = sqrt(R->Element[0][0] * R->Element[0][0] + R->Element[1][0] * R->Element[1][0]);
+
+    bool singular = sy < 1e-6;
+
+    float x, y, z;
+    if (!singular)
+    {
+      x = atan2(R->Element[2][1], R->Element[2][2]);
+      y = atan2(-R->Element[2][0], sy);
+      z = atan2(R->Element[1][0], R->Element[0][0]);
+    }
+    else
+    {
+      x = atan2(-R->Element[1][2], R->Element[1][1]);
+      y = atan2(-R->Element[2][0], sy);
+      z = 0;
+    }
+
+    // Convert Radian to degrees (normalized)
+    a[0] = (x / PI);
+    a[1] = (y / PI);
+    a[2] = (z / PI);
+
+    return a;
+  }
+}
+
 //----------------------------------------------------------------------------
 vtkSlicerGestureRecognitionLogic::vtkSlicerGestureRecognitionLogic()
+  : ModelType(GRT_DECISION_TREE)
+  , ANBCModel(std::make_unique<GRT::ANBC>())
+  , DecisionTreeModel(std::make_unique<GRT::DecisionTree>())
+  , AdaBoostModel(std::make_unique<GRT::AdaBoost>())
+  , KNNModel(std::make_unique<GRT::KNN>())
 {
+  this->TransformModifiedCallback = vtkSmartPointer<vtkCallbackCommand>::New();
+  this->TransformModifiedCallback->SetCallback(OnTransformModified);
+  this->TransformModifiedCallback->SetClientData((void*)this);
+
+  // TODO : download files so that tuning can be done regularly
+  if (!this->DecisionTreeModel->load(GetModuleShareDirectory() + "/DecisionTreeModel.grt"))
+  {
+    vtkErrorMacro("Failed to load Decision Tree model from path: " << this->GetModuleShareDirectory() + "/DecisionTreeModel.grt");
+  }
+
+  if (!this->AdaBoostModel->load(GetModuleShareDirectory() + "/AdaBoostModel.grt"))
+  {
+    vtkErrorMacro("Failed to load AdaBoost model from path: " << this->GetModuleShareDirectory() + "/AdaBoostModel.grt");
+  }
+
+  // Load Adaptive Naive Bayes Classifier Model
+  if (!this->ANBCModel->load(GetModuleShareDirectory() + "/ANBCModel.grt"))
+  {
+    vtkErrorMacro("Failed to load ANBC model from path: " << this->GetModuleShareDirectory() + "/ANBCModel.grt");
+  }
+  if (!this->KNNModel->load(GetModuleShareDirectory() + "/kNNModel.grt"))
+  {
+    vtkErrorMacro("Failed to load KNN model from path: " << this->GetModuleShareDirectory() + "/KNNModel.grt");
+  }
 }
 
 //----------------------------------------------------------------------------
 vtkSlicerGestureRecognitionLogic::~vtkSlicerGestureRecognitionLogic()
 {
+  this->ANBCModel = nullptr;
+  this->DecisionTreeModel = nullptr;
+  this->AdaBoostModel = nullptr;
+  this->KNNModel = nullptr;
 }
 
 //----------------------------------------------------------------------------
@@ -49,35 +116,73 @@ void vtkSlicerGestureRecognitionLogic::PrintSelf(ostream& os, vtkIndent indent)
 }
 
 //---------------------------------------------------------------------------
-void vtkSlicerGestureRecognitionLogic::SetMRMLSceneInternal(vtkMRMLScene * newScene)
+void vtkSlicerGestureRecognitionLogic::StartPrediction(vtkMRMLLinearTransformNode* transformNode)
 {
-  vtkNew<vtkIntArray> events;
-  events->InsertNextValue(vtkMRMLScene::NodeAddedEvent);
-  events->InsertNextValue(vtkMRMLScene::NodeRemovedEvent);
-  events->InsertNextValue(vtkMRMLScene::EndBatchProcessEvent);
-  this->SetAndObserveMRMLSceneEventsInternal(newScene, events.GetPointer());
+  if (this->ObservedTransformNode != nullptr)
+  {
+    this->ObservedTransformNode->RemoveObserver(this->ObserverTag);
+  }
+  this->ObservedTransformNode = transformNode;
+  if (this->ObservedTransformNode != nullptr)
+  {
+    this->ObserverTag = this->ObservedTransformNode->AddObserver(vtkMRMLLinearTransformNode::TransformModifiedEvent, this->TransformModifiedCallback);
+  }
 }
 
-//-----------------------------------------------------------------------------
-void vtkSlicerGestureRecognitionLogic::RegisterNodes()
+//----------------------------------------------------------------------------
+void vtkSlicerGestureRecognitionLogic::SetPredictionModelType(PredictionModel model)
 {
-  assert(this->GetMRMLScene() != 0);
-}
-
-//---------------------------------------------------------------------------
-void vtkSlicerGestureRecognitionLogic::UpdateFromMRMLScene()
-{
-  assert(this->GetMRMLScene() != 0);
-}
-
-//---------------------------------------------------------------------------
-void vtkSlicerGestureRecognitionLogic
-::OnMRMLSceneNodeAdded(vtkMRMLNode* vtkNotUsed(node))
-{
+  this->ModelType = model;
 }
 
 //---------------------------------------------------------------------------
-void vtkSlicerGestureRecognitionLogic
-::OnMRMLSceneNodeRemoved(vtkMRMLNode* vtkNotUsed(node))
+void vtkSlicerGestureRecognitionLogic::OnTransformModified(vtkObject* caller, unsigned long eid, void* clientdata, void* calldata)
 {
+  vtkSlicerGestureRecognitionLogic* self = (vtkSlicerGestureRecognitionLogic*)clientdata;
+
+  vtkMRMLLinearTransformNode* node = static_cast<vtkMRMLLinearTransformNode*>(caller);
+  vtkNew<vtkMatrix4x4> matr;
+  self->ObservedTransformNode->GetMatrixTransformToWorld(matr);
+  std::array<double, 3> ang = vtkMatrixToEulerAngles(matr);
+
+  GRT::VectorFloat inputVector(3);
+  inputVector.at(0) = ang[0];
+  inputVector.at(1) = ang[1];
+  inputVector.at(2) = ang[2];
+
+  GRT::Classifier* classifier(nullptr);
+  switch (self->ModelType)
+  {
+    case GRT_ANBC:
+      classifier = self->ANBCModel.get();
+      break;
+    case GRT_DECISION_TREE:
+      classifier = self->DecisionTreeModel.get();
+      break;
+    case GRT_ADABOOST:
+      classifier = self->AdaBoostModel.get();
+      break;
+    case GRT_KNN:
+      classifier = self->KNNModel.get();
+      break;
+  }
+
+  if (classifier == nullptr)
+  {
+    vtkErrorWithObjectMacro(self, "Unknown prediction model requested.");
+    return;
+  }
+
+  if (!classifier->predict(inputVector))
+  {
+    vtkErrorWithObjectMacro(self, "Failed to perform prediction");
+    return;
+  }
+  UINT predictedClass = classifier->getPredictedClassLabel();
+
+  // If we have predicted a valid gesture fire an event
+  if (predictedClass > 0)
+  {
+    self->InvokeEvent(vtkSlicerGestureRecognitionLogic::GestureRecognizedEvent, &predictedClass);
+  }
 }

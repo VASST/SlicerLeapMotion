@@ -5,6 +5,7 @@ set(MODULE_TITLE ${MODULE_NAME})
 
 string(TOUPPER ${MODULE_NAME} MODULE_NAME_UPPER)
 
+find_package(VASSTAlgorithms REQUIRED NO_MODULE)
 find_package(SlicerOpenCV REQUIRED NO_MODULE)
 find_package(OpenCV REQUIRED NO_MODULE)
 find_package(SlicerVideoCameras REQUIRED NO_MODULE)

@@ -34,7 +34,6 @@ class Q_SLICER_QTMODULES_LEAPCALIBRATION_EXPORT qSlicerLeapCalibrationModuleWidg
   Q_OBJECT
 
 public:
-
   typedef qSlicerAbstractModuleWidget Superclass;
   qSlicerLeapCalibrationModuleWidget(QWidget* parent = 0);
   virtual ~qSlicerLeapCalibrationModuleWidget();

@@ -81,8 +81,7 @@ qSlicerLeapCalibrationModuleWidget::~qSlicerLeapCalibrationModuleWidget()
   disconnect(d->MRMLNodeComboBox_RightImage, static_cast<void (qMRMLNodeComboBox::*)(vtkMRMLNode*)>(&qMRMLNodeComboBox::currentNodeChanged), this, &qSlicerLeapCalibrationModuleWidget::updateUI);
   disconnect(d->MRMLNodeComboBox_LeftCamera, static_cast<void (qMRMLNodeComboBox::*)(vtkMRMLNode*)>(&qMRMLNodeComboBox::currentNodeChanged), this, &qSlicerLeapCalibrationModuleWidget::updateUI);
   disconnect(d->MRMLNodeComboBox_RightCamera, static_cast<void (qMRMLNodeComboBox::*)(vtkMRMLNode*)>(&qMRMLNodeComboBox::currentNodeChanged), this, &qSlicerLeapCalibrationModuleWidget::updateUI);
-  disconnect(d->MRMLNodeComboBox_TipToWorldTransform, static_cast<void (qMRMLNodeComboBox::*)(vtkMRMLNode*)>(&qMRMLNodeComboBox::currentNodeChanged), this, &qSlicerLeapCalibrationModuleWidget::updateUI);
-  disconnect(d->MRMLNodeComboBox_HMDToWorldTransform, static_cast<void (qMRMLNodeComboBox::*)(vtkMRMLNode*)>(&qMRMLNodeComboBox::currentNodeChanged), this, &qSlicerLeapCalibrationModuleWidget::updateUI);
+  disconnect(d->MRMLNodeComboBox_TipToHMDTransform, static_cast<void (qMRMLNodeComboBox::*)(vtkMRMLNode*)>(&qMRMLNodeComboBox::currentNodeChanged), this, &qSlicerLeapCalibrationModuleWidget::updateUI);
   disconnect(d->PushButton_StartStop, &QPushButton::clicked, this, &qSlicerLeapCalibrationModuleWidget::onStartStopButtonClicked);
   disconnect(d->PushButton_Reset, &QPushButton::clicked, this, &qSlicerLeapCalibrationModuleWidget::onResetButtonClicked);
   disconnect(d->DoubleSpinBox_Baseline, static_cast<void (QDoubleSpinBox::*)(double)>(&QDoubleSpinBox::valueChanged), this, &qSlicerLeapCalibrationModuleWidget::onBaselineChanged);
@@ -99,13 +98,11 @@ void qSlicerLeapCalibrationModuleWidget::setup()
   connect(d->MRMLNodeComboBox_RightImage, static_cast<void (qMRMLNodeComboBox::*)(vtkMRMLNode*)>(&qMRMLNodeComboBox::currentNodeChanged), this, &qSlicerLeapCalibrationModuleWidget::updateUI);
   connect(d->MRMLNodeComboBox_LeftCamera, static_cast<void (qMRMLNodeComboBox::*)(vtkMRMLNode*)>(&qMRMLNodeComboBox::currentNodeChanged), this, &qSlicerLeapCalibrationModuleWidget::updateUI);
   connect(d->MRMLNodeComboBox_RightCamera, static_cast<void (qMRMLNodeComboBox::*)(vtkMRMLNode*)>(&qMRMLNodeComboBox::currentNodeChanged), this, &qSlicerLeapCalibrationModuleWidget::updateUI);
-  connect(d->MRMLNodeComboBox_TipToWorldTransform, static_cast<void (qMRMLNodeComboBox::*)(vtkMRMLNode*)>(&qMRMLNodeComboBox::currentNodeChanged), this, &qSlicerLeapCalibrationModuleWidget::updateUI);
-  connect(d->MRMLNodeComboBox_HMDToWorldTransform, static_cast<void (qMRMLNodeComboBox::*)(vtkMRMLNode*)>(&qMRMLNodeComboBox::currentNodeChanged), this, &qSlicerLeapCalibrationModuleWidget::updateUI);
+  connect(d->MRMLNodeComboBox_TipToHMDTransform, static_cast<void (qMRMLNodeComboBox::*)(vtkMRMLNode*)>(&qMRMLNodeComboBox::currentNodeChanged), this, &qSlicerLeapCalibrationModuleWidget::updateUI);
   connect(d->PushButton_StartStop, &QPushButton::clicked, this, &qSlicerLeapCalibrationModuleWidget::onStartStopButtonClicked);
   connect(d->PushButton_Reset, &QPushButton::clicked, this, &qSlicerLeapCalibrationModuleWidget::onResetButtonClicked);
   connect(d->DoubleSpinBox_Baseline, static_cast<void (QDoubleSpinBox::*)(double)>(&QDoubleSpinBox::valueChanged), this, &qSlicerLeapCalibrationModuleWidget::onBaselineChanged);
 }
-
 
 //----------------------------------------------------------------------------
 void qSlicerLeapCalibrationModuleWidget::updateUI()
