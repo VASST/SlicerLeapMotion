@@ -33,6 +33,7 @@
 
 // STL includes
 #include <memory>
+#include <array>
 
 // Local includes
 #include "vtkSlicerGestureRecognitionModuleLogicExport.h"
