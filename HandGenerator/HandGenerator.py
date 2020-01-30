@@ -53,8 +53,14 @@ class HandGeneratorWidget(ScriptedLoadableModuleWidget):
     self.generateButton.text = "Generate Hands" 
     self.parametersFormLayout.addWidget(self.generateButton)
 
+    self.generateModelButton = qt.QPushButton()
+    self.generateModelButton.setDefault(False)
+    self.generateModelButton.text = "Generate Hand Models" 
+    self.parametersFormLayout.addWidget(self.generateModelButton)
+
     self.connectButton.connect('clicked(bool)', self.onConnectButtonClicked)
     self.generateButton.connect('clicked(bool)', self.generateCylinders)
+    self.generateButton.connect('clicked(bool)', self.generateModels)
     self.layout.addStretch(1)
 
   def onConnectButtonClicked(self):
@@ -115,3 +121,53 @@ class HandGeneratorWidget(ScriptedLoadableModuleWidget):
           slicer.mrmlScene.RemoveNode(nodes[i])
       self.generated = False
       self.generateCylinders()
+
+
+  def generateModels(self):
+    if self.generated == False:
+      self.nodes = slicer.util.getNodesByClass('vtkMRMLLinearTransformNode')
+      self.n = len(self.nodes)
+      l = slicer.modules.createmodels.logic()
+      mat = vtk.vtkMatrix4x4()
+      mat.SetElement(2,2,-1)
+      mat.SetElement(0,0,-1)
+      self.Xflip = slicer.mrmlScene.AddNewNodeByClass('vtkMRMLLinearTransformNode')
+      self.Xflip.SetName('LHG_Xflip')
+      self.Xflip.SetAndObserveMatrixTransformToParent(mat)
+      self.generated = True 
+      self.resourcePath = os.path.dirname(os.path.abspath(__file__))
+      print(self.resourcePath)
+
+
+      for i in range (0, self.n):
+        if 'Left' in self.nodes[i].GetName() or 'Right' in self.nodes[i].GetName():
+          if 'Dis' in self.nodes[i].GetName() or 'Int' in self.nodes[i].GetName() or 'Prox' in self.nodes[i].GetName() or 'Meta' in self.nodes[i].GetName() or 'Palm' in self.nodes[i].GetName():
+            
+            
+            print('Resources\\' + self.nodes[i].GetName() + ".stl")
+            self.tempModel = slicer.util.loadModel(os.path.join(self.resourcePath, 'Resources\\' + self.nodes[i].GetName() + ".stl"))
+            self.nodes[i].SetAndObserveTransformNodeID(self.Xflip.GetID())
+            self.tempModel.SetAndObserveTransformNodeID(self.nodes[i].GetID())
+            self.tempModel.SetName('LHG_Seg' + self.nodes[i].GetName())
+          
+    else:
+      self.nodes = slicer.util.getNodesByClass('vtkMRMLLinearTransformNode')
+      self.n = len(self.nodes)
+      self.models = slicer.util.getNodesByClass('vtkMRMLModelNode')
+      if self.Xflip is None:
+        mat = vtk.vtkMatrix4x4()
+        mat.SetElement(2,2,-1)
+        mat.SetElement(0,0,-1)
+        self.Xflip = slicer.mrmlScene.AddNewNodeByClass('vtkMRMLLinearTransformNode')
+        self.Xflip.SetName('LHG_Xflip')
+        self.Xflip.SetAndObserveMatrixTransformToParent(mat)
+      for j in range(0, len(self.models)): 
+        slicer.mrmlScene.RemoveNode(self.models[j])
+      for i in range (0, self.n):
+        if 'Left' in self.nodes[i].GetName() or 'Right' in self.nodes[i].GetName():
+          if 'Dis' in self.nodes[i].GetName() or 'Int' in self.nodes[i].GetName() or 'Prox' in self.nodes[i].GetName() or 'Meta' in self.nodes[i].GetName():
+            print('Resources\\' + self.nodes[i].GetName() + ".stl")
+            self.tempModel = slicer.util.loadModel(os.path.join(self.resourcePath, 'Resources\\' + self.nodes[i].GetName() + ".stl"))
+            self.nodes[i].SetAndObserveTransformNodeID(self.Xflip.GetID())
+            self.tempModel.SetAndObserveTransformNodeID(self.nodes[i].GetID())
+            self.tempModel.SetName('LHG_Seg' + self.nodes[i].GetName())
