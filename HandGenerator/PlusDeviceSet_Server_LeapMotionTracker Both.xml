@@ -26,13 +26,14 @@
         <DataSource Type="Tool" Id="LeftRingIntermediate"/>
         <DataSource Type="Tool" Id="LeftPinkyIntermediate"/>
 
-        <DataSource Type="Tool" Id="LeftThumbProximal"/>
+        <!--<DataSource Type="Tool" Id="LeftThumbProximal"/>-->
         <DataSource Type="Tool" Id="LeftIndexProximal"/>
         <DataSource Type="Tool" Id="LeftMiddleProximal"/>
         <DataSource Type="Tool" Id="LeftRingProximal"/>
         <DataSource Type="Tool" Id="LeftPinkyProximal"/>
 
-        <DataSource Type="Tool" Id="LeftPalm"/>
+        <!--<DataSource Type="Tool" Id="LeftPalm"/>-->
+		<DataSource Type="Tool" Id="LeftMiddleMetacarpal"/>
         
         <DataSource Type="Tool" Id="RightThumbDistal"/>
         <DataSource Type="Tool" Id="RightIndexDistal"/>
@@ -46,13 +47,14 @@
         <DataSource Type="Tool" Id="RightRingIntermediate"/>
         <DataSource Type="Tool" Id="RightPinkyIntermediate"/>
 
-        <DataSource Type="Tool" Id="RightThumbProximal"/>
+        <!--<DataSource Type="Tool" Id="RightThumbProximal"/>-->
         <DataSource Type="Tool" Id="RightIndexProximal"/>
         <DataSource Type="Tool" Id="RightMiddleProximal"/>
         <DataSource Type="Tool" Id="RightRingProximal"/>
         <DataSource Type="Tool" Id="RightPinkyProximal"/>
 
-        <DataSource Type="Tool" Id="RightPalm"/>
+        <!--<DataSource Type="Tool" Id="RightPalm"/>-->
+		<DataSource Type="Tool" Id="RightMiddleMetacarpal"/>
 
       </DataSources>
       <OutputChannels>
@@ -72,12 +74,13 @@
           <DataSource Id="LeftRingIntermediate"/>
           <DataSource Id="LeftPinkyIntermediate"/>
           
-          <DataSource Id="LeftThumbProximal"/>
+          <!--<DataSource Id="LeftThumbProximal"/>-->
           <DataSource Id="LeftIndexProximal"/>
           <DataSource Id="LeftMiddleProximal"/>
           <DataSource Id="LeftRingProximal"/>
           <DataSource Id="LeftPinkyProximal"/>
-          <DataSource Id="LeftPalm"/>
+          <!--<DataSource Id="LeftPalm"/>-->
+		  <DataSource Id="LeftMiddleMetacarpal"/>
 
           <DataSource Id="RightThumbDistal"/>
           <DataSource Id="RightIndexDistal"/>
@@ -91,12 +94,13 @@
           <DataSource Id="RightRingIntermediate"/>
           <DataSource Id="RightPinkyIntermediate"/>
 
-          <DataSource Id="RightThumbProximal"/>
+          <!--<DataSource Id="RightThumbProximal"/>-->
           <DataSource Id="RightIndexProximal"/>
           <DataSource Id="RightMiddleProximal"/>
           <DataSource Id="RightRingProximal"/>
           <DataSource Id="RightPinkyProximal"/>
-          <DataSource Id="RightPalm"/>
+          <!--<DataSource Id="RightPalm"/>-->
+		  <DataSource Id="RightMiddleMetacarpal"/>
         </OutputChannel>
       </OutputChannels>
     </Device>
@@ -160,12 +164,13 @@
         <Transform Name="LeftRingIntermediateToTracker"/>
         <Transform Name="LeftPinkyIntermediateToTracker"/>
 
-        <Transform Name="LeftThumbProximalToTracker"/>
+        <!--<Transform Name="LeftThumbProximalToTracker"/>-->
         <Transform Name="LeftIndexProximalToTracker"/>
         <Transform Name="LeftMiddleProximalToTracker"/>
         <Transform Name="LeftRingProximalToTracker"/>
         <Transform Name="LeftPinkyProximalToTracker"/>
-        <Transform Name="LeftPalmToTracker"/>
+        <!--<Transform Name="LeftPalmToTracker"/>-->
+		<Transform Name="LeftMiddleMetacarpalToTracker"/>
 
         <Transform Name="RightThumbDistalToTracker"/>
         <Transform Name="RightIndexDistalToTracker"/>
@@ -179,13 +184,13 @@
         <Transform Name="RightRingIntermediateToTracker"/>
         <Transform Name="RightPinkyIntermediateToTracker"/>
 
-        <Transform Name="RightThumbProximalToTracker"/>
+        <!--<Transform Name="RightThumbProximalToTracker"/>-->
         <Transform Name="RightIndexProximalToTracker"/>
         <Transform Name="RightMiddleProximalToTracker"/>
         <Transform Name="RightRingProximalToTracker"/>
         <Transform Name="RightPinkyProximalToTracker"/>
-        <Transform Name="RightPalmToTracker"/>
-        
+        <!--<Transform Name="RightPalmToTracker"/>-->
+        <Transform Name="RightMiddleMetacarpalToTracker"/>
       </TransformNames>
     </DefaultClientInfo>
   </PlusOpenIGTLinkServer> 

@@ -8,7 +8,7 @@
       AcquisitionRate="1000"
       Id="TrackerDevice"
       Type="LeapMotion"
-      LeapHMDPolicy="FALSE"
+      LeapHMDPolicy="TRUE"
       ToolReferenceFrame="Tracker" >
       <DataSources>
         <DataSource Type="Video" Id="LeftCamera"/>
@@ -48,13 +48,14 @@
         <DataSource Type="Tool" Id="RightRingIntermediate"/>
         <DataSource Type="Tool" Id="RightPinkyIntermediate"/>
 
-        <DataSource Type="Tool" Id="RightThumbProximal"/>
+        <!--<DataSource Type="Tool" Id="RightThumbProximal"/>-->
         <DataSource Type="Tool" Id="RightIndexProximal"/>
         <DataSource Type="Tool" Id="RightMiddleProximal"/>
         <DataSource Type="Tool" Id="RightRingProximal"/>
         <DataSource Type="Tool" Id="RightPinkyProximal"/>
 
-        <DataSource Type="Tool" Id="RightPalm"/>
+        <!--<DataSource Type="Tool" Id="RightPalm"/>-->
+		<DataSource Type="Tool" Id="RightMiddleMetacarpal"/>
 
       </DataSources>
       <OutputChannels>
@@ -95,12 +96,13 @@
           <DataSource Id="RightRingIntermediate"/>
           <DataSource Id="RightPinkyIntermediate"/>
 
-          <DataSource Id="RightThumbProximal"/>
+          <!--<DataSource Id="RightThumbProximal"/>-->
           <DataSource Id="RightIndexProximal"/>
           <DataSource Id="RightMiddleProximal"/>
           <DataSource Id="RightRingProximal"/>
           <DataSource Id="RightPinkyProximal"/>
-          <DataSource Id="RightPalm"/>
+          <!--<DataSource Id="RightPalm"/>-->
+		  <DataSource Id="RightMiddleMetacarpal"/>
         </OutputChannel>
       </OutputChannels>
     </Device>
@@ -185,13 +187,13 @@
         <Transform Name="RightRingIntermediateToTracker"/>
         <Transform Name="RightPinkyIntermediateToTracker"/>
 
-        <Transform Name="RightThumbProximalToTracker"/>
+        <!--<Transform Name="RightThumbProximalToTracker"/>-->
         <Transform Name="RightIndexProximalToTracker"/>
         <Transform Name="RightMiddleProximalToTracker"/>
         <Transform Name="RightRingProximalToTracker"/>
         <Transform Name="RightPinkyProximalToTracker"/>
-        <Transform Name="RightPalmToTracker"/>
-        
+        <!--<Transform Name="RightPalmToTracker"/>-->
+        <Transform Name="RightMiddleMetacarpalToTracker"/>
       </TransformNames>
     </DefaultClientInfo>
   </PlusOpenIGTLinkServer> 
