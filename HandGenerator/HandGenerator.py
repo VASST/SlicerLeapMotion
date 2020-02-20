@@ -50,6 +50,7 @@ class HandGeneratorWidget(ScriptedLoadableModuleWidget):
 
     self.generateButton = qt.QPushButton()
     self.generateButton.setDefault(False)
+
     self.generateButton.text = "Generate Hands" 
     self.parametersFormLayout.addWidget(self.generateButton)
 

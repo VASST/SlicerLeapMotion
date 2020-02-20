@@ -12,7 +12,6 @@ What you need to run this module:
         the scripted python module for Slicer on the lines that throw errors.
 3. OpenIGTLinkIF module/extension in Slicer. This can be installed through the 3D Slicer extension manager.
 
-
 Steps to run the module:
 1. Add the "PlusDeviceSet_Server_LeapMotionTracker Right/Left/Both.xml" files that are part of this module to wherever you want them to be 
         stored for the PlusServer to access them.
@@ -33,8 +32,6 @@ Steps to run the module:
 11. Place your hand(s) within view of the Leap Motion sensor and then press the "Generate Hands" button.
 12. Have fun.
 
-
-
 ***KNOWN BUGS***
 At the time of making this README file, I (Thomas) know of one fatal bug in the program.
 1. DO NOT press the "Generate Hands" button twice. If you do the module fails and no hands will be displayed. This can be fixed by making sure
@@ -45,4 +42,3 @@ At the time of making this README file, I (Thomas) know of one fatal bug in the 
     the module:" section, and make sure your hand is within view of the Leap Motion sensor.
 
 Note: Hopefully these bugs won't be an issue in the future.
-
