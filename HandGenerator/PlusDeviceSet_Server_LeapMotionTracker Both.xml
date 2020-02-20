@@ -8,54 +8,43 @@
       AcquisitionRate="1000"
       Id="TrackerDevice"
       Type="LeapMotion"
-      LeapHMDPolicy="TRUE"
+      LeapHMDPolicy="FALSE"
       ToolReferenceFrame="Tracker" >
       <DataSources>
         <DataSource Type="Video" Id="LeftCamera"/>
         <DataSource Type="Video" Id="RightCamera"/>
-
         <DataSource Type="Tool" Id="LeftThumbDistal"/>
         <DataSource Type="Tool" Id="LeftIndexDistal"/>
         <DataSource Type="Tool" Id="LeftMiddleDistal"/>
         <DataSource Type="Tool" Id="LeftRingDistal"/>
         <DataSource Type="Tool" Id="LeftPinkyDistal"/>
-
         <DataSource Type="Tool" Id="LeftThumbIntermediate"/>
         <DataSource Type="Tool" Id="LeftIndexIntermediate"/>
         <DataSource Type="Tool" Id="LeftMiddleIntermediate"/>
         <DataSource Type="Tool" Id="LeftRingIntermediate"/>
         <DataSource Type="Tool" Id="LeftPinkyIntermediate"/>
-
-        <!--<DataSource Type="Tool" Id="LeftThumbProximal"/>-->
+        <DataSource Type="Tool" Id="LeftThumbProximal"/>
         <DataSource Type="Tool" Id="LeftIndexProximal"/>
         <DataSource Type="Tool" Id="LeftMiddleProximal"/>
         <DataSource Type="Tool" Id="LeftRingProximal"/>
         <DataSource Type="Tool" Id="LeftPinkyProximal"/>
-
-        <!--<DataSource Type="Tool" Id="LeftPalm"/>-->
-		<DataSource Type="Tool" Id="LeftMiddleMetacarpal"/>
-        
+        <DataSource Type="Tool" Id="LeftPalm"/>
         <DataSource Type="Tool" Id="RightThumbDistal"/>
         <DataSource Type="Tool" Id="RightIndexDistal"/>
         <DataSource Type="Tool" Id="RightMiddleDistal"/>
         <DataSource Type="Tool" Id="RightRingDistal"/>
         <DataSource Type="Tool" Id="RightPinkyDistal"/>
-
         <DataSource Type="Tool" Id="RightThumbIntermediate"/>
         <DataSource Type="Tool" Id="RightIndexIntermediate"/>
         <DataSource Type="Tool" Id="RightMiddleIntermediate"/>
         <DataSource Type="Tool" Id="RightRingIntermediate"/>
         <DataSource Type="Tool" Id="RightPinkyIntermediate"/>
-
-        <!--<DataSource Type="Tool" Id="RightThumbProximal"/>-->
+        <DataSource Type="Tool" Id="RightThumbProximal"/>
         <DataSource Type="Tool" Id="RightIndexProximal"/>
         <DataSource Type="Tool" Id="RightMiddleProximal"/>
         <DataSource Type="Tool" Id="RightRingProximal"/>
         <DataSource Type="Tool" Id="RightPinkyProximal"/>
-
-        <!--<DataSource Type="Tool" Id="RightPalm"/>-->
-		<DataSource Type="Tool" Id="RightMiddleMetacarpal"/>
-
+        <DataSource Type="Tool" Id="RightPalm"/>
       </DataSources>
       <OutputChannels>
         <OutputChannel Id="LeftChannel" VideoDataSourceId="LeftCamera"/>
@@ -67,40 +56,33 @@
           <DataSource Id="LeftMiddleDistal"/>
           <DataSource Id="LeftRingDistal"/>
           <DataSource Id="LeftPinkyDistal"/>
-
           <DataSource Id="LeftThumbIntermediate"/>
           <DataSource Id="LeftIndexIntermediate"/>
           <DataSource Id="LeftMiddleIntermediate"/>
           <DataSource Id="LeftRingIntermediate"/>
           <DataSource Id="LeftPinkyIntermediate"/>
-          
-          <!--<DataSource Id="LeftThumbProximal"/>-->
+          <DataSource Id="LeftThumbProximal"/>
           <DataSource Id="LeftIndexProximal"/>
           <DataSource Id="LeftMiddleProximal"/>
           <DataSource Id="LeftRingProximal"/>
           <DataSource Id="LeftPinkyProximal"/>
-          <!--<DataSource Id="LeftPalm"/>-->
-		  <DataSource Id="LeftMiddleMetacarpal"/>
-
+          <DataSource Id="LeftPalm"/>
           <DataSource Id="RightThumbDistal"/>
           <DataSource Id="RightIndexDistal"/>
           <DataSource Id="RightMiddleDistal"/>
           <DataSource Id="RightRingDistal"/>
           <DataSource Id="RightPinkyDistal"/>
-
           <DataSource Id="RightThumbIntermediate"/>
           <DataSource Id="RightIndexIntermediate"/>
           <DataSource Id="RightMiddleIntermediate"/>
           <DataSource Id="RightRingIntermediate"/>
           <DataSource Id="RightPinkyIntermediate"/>
-
-          <!--<DataSource Id="RightThumbProximal"/>-->
+          <DataSource Id="RightThumbProximal"/>
           <DataSource Id="RightIndexProximal"/>
           <DataSource Id="RightMiddleProximal"/>
           <DataSource Id="RightRingProximal"/>
           <DataSource Id="RightPinkyProximal"/>
-          <!--<DataSource Id="RightPalm"/>-->
-		  <DataSource Id="RightMiddleMetacarpal"/>
+          <DataSource Id="RightPalm"/>
         </OutputChannel>
       </OutputChannels>
     </Device>
@@ -164,13 +146,12 @@
         <Transform Name="LeftRingIntermediateToTracker"/>
         <Transform Name="LeftPinkyIntermediateToTracker"/>
 
-        <!--<Transform Name="LeftThumbProximalToTracker"/>-->
+        <Transform Name="LeftThumbProximalToTracker"/>
         <Transform Name="LeftIndexProximalToTracker"/>
         <Transform Name="LeftMiddleProximalToTracker"/>
         <Transform Name="LeftRingProximalToTracker"/>
         <Transform Name="LeftPinkyProximalToTracker"/>
-        <!--<Transform Name="LeftPalmToTracker"/>-->
-		<Transform Name="LeftMiddleMetacarpalToTracker"/>
+        <Transform Name="LeftPalmToTracker"/>
 
         <Transform Name="RightThumbDistalToTracker"/>
         <Transform Name="RightIndexDistalToTracker"/>
@@ -184,13 +165,12 @@
         <Transform Name="RightRingIntermediateToTracker"/>
         <Transform Name="RightPinkyIntermediateToTracker"/>
 
-        <!--<Transform Name="RightThumbProximalToTracker"/>-->
+        <Transform Name="RightThumbProximalToTracker"/>
         <Transform Name="RightIndexProximalToTracker"/>
         <Transform Name="RightMiddleProximalToTracker"/>
         <Transform Name="RightRingProximalToTracker"/>
         <Transform Name="RightPinkyProximalToTracker"/>
-        <!--<Transform Name="RightPalmToTracker"/>-->
-        <Transform Name="RightMiddleMetacarpalToTracker"/>
+        <Transform Name="RightPalmToTracker"/>
       </TransformNames>
     </DefaultClientInfo>
   </PlusOpenIGTLinkServer> 
