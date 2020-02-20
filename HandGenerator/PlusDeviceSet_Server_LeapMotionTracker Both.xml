@@ -8,7 +8,7 @@
       AcquisitionRate="1000"
       Id="TrackerDevice"
       Type="LeapMotion"
-      LeapHMDPolicy="FALSE"
+      LeapHMDPolicy="TRUE"
       ToolReferenceFrame="Tracker" >
       <DataSources>
         <DataSource Type="Video" Id="LeftCamera"/>
