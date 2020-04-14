@@ -28,7 +28,7 @@ class HandGeneratorWidget(ScriptedLoadableModuleWidget):
 
     self.connectorNode = None
     self.generated = False
-
+    slicer.mymod = self 
   def setup(self):
     ScriptedLoadableModuleWidget.setup(self)
 
@@ -50,12 +50,17 @@ class HandGeneratorWidget(ScriptedLoadableModuleWidget):
 
     self.generateButton = qt.QPushButton()
     self.generateButton.setDefault(False)
-
     self.generateButton.text = "Generate Hands" 
     self.parametersFormLayout.addWidget(self.generateButton)
 
+    self.generateModelButton = qt.QPushButton()
+    self.generateModelButton.setDefault(False)
+    self.generateModelButton.text = "Generate Hand Models" 
+    self.parametersFormLayout.addWidget(self.generateModelButton)
+
     self.connectButton.connect('clicked(bool)', self.onConnectButtonClicked)
     self.generateButton.connect('clicked(bool)', self.generateCylinders)
+    self.generateModelButton.connect('clicked(bool)', self.generateModels)
     self.layout.addStretch(1)
 
   def onConnectButtonClicked(self):
@@ -116,3 +121,118 @@ class HandGeneratorWidget(ScriptedLoadableModuleWidget):
           slicer.mrmlScene.RemoveNode(nodes[i])
       self.generated = False
       self.generateCylinders()
+
+
+  def generateModels(self):
+    self.resourcePath = os.path.dirname(os.path.abspath(__file__))
+    if self.generated == False:
+      self.nodes = slicer.util.getNodesByClass('vtkMRMLLinearTransformNode')
+      self.n = len(self.nodes)
+      l = slicer.modules.createmodels.logic()
+      
+      mat = vtk.vtkMatrix4x4()
+      mat_axis_conv = vtk.vtkMatrix4x4()
+      mat_table_to_mounted = vtk.vtkMatrix4x4()
+      # Old transforms
+      mat.SetElement(0,0,-1)
+      mat.SetElement(2,2,-1)
+
+      # Transform Matrix for HTC VIVE
+      #mat.SetElement(0,0,-0.99)
+      #mat.SetElement(0,1,-0.02)
+      #mat.SetElement(0,2,0.08)
+      #mat.SetElement(0,3,-2.75)
+      #mat.SetElement(1,0,-0.06)
+      #mat.SetElement(1,1,-.23)
+      #mat.SetElement(1,2,-0.97)
+      #mat.SetElement(1,3,29.11)
+      #mat.SetElement(2,0,0.04)
+      #mat.SetElement(2,1,-0.98)
+      #mat.SetElement(2,2,0.23)
+      #mat.SetElement(2,3,-133.75)
+      
+      # Transform Matrix for HTC VIVE PRO
+      mat.SetElement(0,0,-0.99)
+      mat.SetElement(0,1,-0.02)
+      mat.SetElement(0,2,0.08)
+      mat.SetElement(0,3,7.25)
+      mat.SetElement(1,0,-0.06)
+      mat.SetElement(1,1,-0.23)
+      mat.SetElement(1,2,-0.97)
+      mat.SetElement(1,3,-100.89)
+      mat.SetElement(2,0,0.04)
+      mat.SetElement(2,1,-0.98)
+      mat.SetElement(2,2,0.23)
+      mat.SetElement(2,3,-111.75)
+	  
+      # Transforms from https://developer.leapmotion.com/documentation/v4/vrar.html
+      # Must attach to HMD transforms (ie, make HMD transform the parent of this matrix
+      # Setting the axis_conversion
+      #mat_axis_conv.SetElement(2,2,-1) #Identity with position 2,2 (starting from 0) set to -1
+	  
+      # Setting the table_to_mounted matrix
+      #mat_table_to_mounted.SetElement(0,0,-1)
+      #mat_table_to_mounted.SetElement(1,1,0)
+      #mat_table_to_mounted.SetElement(1,2,-1)
+      #mat_table_to_mounted.SetElement(2,1,-1)
+      #mat_table_to_mounted.SetElement(2,2,0)
+      #mat_table_to_mounted.SetElement(2,3,-80)
+      
+      #Multiply4x4(mat_axis_conv, mat_table_to_mounted, mat)
+      #vtk.vtkMatrix4x4.Multiply4x4(mat_axis_conv,mat_table_to_mounted, mat)
+
+      self.Xflip = slicer.mrmlScene.AddNewNodeByClass('vtkMRMLLinearTransformNode')
+      self.Xflip.SetName('LHG_TrackerToHMD')
+      self.Xflip.SetAndObserveMatrixTransformToParent(mat)
+      #self.Xflip.SetAndObserveTransformNodeID(self.Xflip.GetID())  Set this to observe the VR.HMD transform
+      #self.HMDAlign = slicer.mrmlScene.AddNewNodeByClass('vtkMRMLLinearTransformNode')
+      #self.HMDAlign.SetName("LHG_RASToHMD")
+      self.generated = True 
+      
+      print(self.resourcePath)
+
+
+      for i in range (0, self.n):
+        if 'Left' in self.nodes[i].GetName() or 'Right' in self.nodes[i].GetName():
+          if 'Dis' in self.nodes[i].GetName() or 'Int' in self.nodes[i].GetName() or 'Prox' in self.nodes[i].GetName() or 'Meta' in self.nodes[i].GetName() or 'Palm' in self.nodes[i].GetName():
+            
+            
+            print('Resources\\' + self.nodes[i].GetName() + ".stl")
+            self.tempModel = slicer.util.loadModel(os.path.join(self.resourcePath, 'Resources\\' + self.nodes[i].GetName() + ".stl"))
+            if self.tempModel is not False: 
+              self.nodes[i].SetAndObserveTransformNodeID(self.Xflip.GetID())
+              self.tempModel.SetAndObserveTransformNodeID(self.nodes[i].GetID())
+              self.tempModel.SetName('LHG_Seg' + self.nodes[i].GetName())
+          
+    else:
+      self.nodes = slicer.util.getNodesByClass('vtkMRMLLinearTransformNode')
+      self.n = len(self.nodes)
+      self.models = slicer.util.getNodesByClass('vtkMRMLModelNode')
+      if self.Xflip is None:
+        mat = vtk.vtkMatrix4x4()
+        # Old transforms
+        mat.SetElement(0,0,-1)
+        mat.SetElement(2,2,-1)
+
+        # New transforms
+        mat.SetElement(0,0,-1)
+        mat.SetElement(1,1,0.17)
+        mat.SetElement(1,2,-0.99)
+        mat.SetElement(1,3,-70)
+        mat.SetElement(2,1,-0.99)
+        mat.SetElement(2,2,-0.17)
+        mat.SetElement(2,3,-80)
+        self.Xflip = slicer.mrmlScene.AddNewNodeByClass('vtkMRMLLinearTransformNode')
+        self.Xflip.SetName('LHG_TrackerToHMD')
+        self.Xflip.SetAndObserveMatrixTransformToParent(mat)
+      for j in range(0, len(self.models)):
+        if 'LHG_' in self.models[j].GetName():
+          slicer.mrmlScene.RemoveNode(self.models[j])
+      for i in range (0, self.n):
+        if 'Left' in self.nodes[i].GetName() or 'Right' in self.nodes[i].GetName():
+          if 'Dis' in self.nodes[i].GetName() or 'Int' in self.nodes[i].GetName() or 'Prox' in self.nodes[i].GetName() or 'Meta' in self.nodes[i].GetName():
+            print('Resources\\' + self.nodes[i].GetName() + ".stl")
+            self.tempModel = slicer.util.loadModel(os.path.join(self.resourcePath, 'Resources\\' + self.nodes[i].GetName() + ".stl"))
+            self.nodes[i].SetAndObserveTransformNodeID(self.Xflip.GetID())
+            self.tempModel.SetAndObserveTransformNodeID(self.nodes[i].GetID())
+            self.tempModel.SetName('LHG_Seg' + self.nodes[i].GetName())
